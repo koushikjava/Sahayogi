@@ -1,5 +1,4 @@
 package com.koushik.rest;
- 
 
 import DataBaseControler.DataBaseControl;
 import DataBaseControler.Dbresponse;
@@ -22,73 +21,72 @@ import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+
 @Path("/medical")
-public class medical extends MedicalDbcontroler{
-    
-    String res="";
- 
-	@GET
-	@Path("/{param}")
-	public Response getMsg(@PathParam("param") String msg) {
- 
-		String output = "Jersey say : " + msg;
- 
-		return Response.status(200).entity(output).build();
- 
-	}
-        
-        @POST
-	@Path("/insert_Doctor")
-        @Consumes(MediaType.APPLICATION_JSON)
-        public Response postStudentRecord(String student){
-        String result = "Record entered: "+ student;
-         super.InsertNuseryData(student,new Dbresponse() {
+public class medical extends MedicalDbcontroler {
+
+    String res = "";
+
+    @GET
+    @Path("/{param}")
+    public Response getMsg(@PathParam("param") String msg) {
+
+        String output = "Jersey say : " + msg;
+
+        return Response.status(200).entity(output).build();
+
+    }
+
+    @POST
+    @Path("/Chember/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response postNewRecord(String student) {
+        super.InsertChembesrData(student, new Dbresponse() {
             @Override
             public void OnSucess(String data) {
-                res=data;
+                res = data;
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
-        
-        
-                      Document document = Document.parse(student);
-        Document append = document.append("id", res);
+        Document append = null;
+        if (!res.equals("")) {
+            Document document = Document.parse(student);
+            append = document.append("id", res).append("code", 200);
+        } else {
+            append = new Document();
+            append.put("code", 203);
+            append.put("message", "Alreadt Esixt");
+        }
 
-         
-       
-        JsonWriterSettings writerSettings = new JsonWriterSettings(JsonMode.SHELL, true);           
+        JsonWriterSettings writerSettings = new JsonWriterSettings(JsonMode.SHELL, true);
 
-        
-        
         return Response.ok(append.toJson(writerSettings), MediaType.APPLICATION_JSON).build();
+    }
+    
+     @POST
+    @Path("/Chember/find")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response FindChemberRecord(String student) {
+        super.FindChembesrData(student, new Dbresponse() {
+            @Override
+            public void OnSucess(String data) {
+                res = data;
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
+        });
+        Document append = null;
+        if (!res.equals("")) {
+            Document document = Document.parse(res);
+            append = document.append("code", 200);
+        } else {
+            append = new Document();
+            append.put("code", 203);
+            append.put("message", "Alreadt Esixt");
+        }
 
+        JsonWriterSettings writerSettings = new JsonWriterSettings(JsonMode.SHELL, true);
 
-//	public Response getCount(@PathParam("data") String msg) {
-//           
-//        JSONObject obj = new JSONObject();
-//        obj.put("name", msg);
-//        obj.put("age", new Integer(100));
-//        String outut1=obj.toString();
-//        
-//        super.InsertNuseryData(outut1,new Dbresponse() {
-//            @Override
-//            public void OnSucess(String data) {
-//                res=data;
-//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//            }
-//        });
-//        
-//             
-//        obj.put("conn", res);
-//        
-//        
-//        String outut=obj.toString();
-//        
-//        
-// 
-////		return Response.status(200).entity(outut).build();
-//    return Response.ok(outut, MediaType.APPLICATION_JSON).build();
-//	}
- 
+        return Response.ok(append.toJson(writerSettings), MediaType.APPLICATION_JSON).build();
+    }
+  
 }
