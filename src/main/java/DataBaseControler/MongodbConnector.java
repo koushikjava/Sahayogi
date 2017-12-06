@@ -18,6 +18,7 @@ public class MongodbConnector {
     public static  MongoClient mongoClient;
     public static String DBDOCTOR = "MediCal_DB";
     public static String CHEMBERS="Chembers";
+     public static String DOCTOR="Doctor";
 
     MongodbConnector(OnDbConnection DBCN) {
         try {

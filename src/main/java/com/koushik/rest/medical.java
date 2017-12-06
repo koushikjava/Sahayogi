@@ -32,7 +32,7 @@ public class medical extends MedicalDbcontroler {
     public Response getMsg(@PathParam("param") String msg) {
 
         String output = "Jersey say : " + msg;
-
+       
         return Response.status(200).entity(output).build();
 
     }
@@ -41,6 +41,32 @@ public class medical extends MedicalDbcontroler {
     @Path("/Chember/new")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response postNewRecord(String student) {
+        super.InsertChembesrData(student, new Dbresponse() {
+            @Override
+            public void OnSucess(String data) {
+                res = data;
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        Document append = null;
+        if (!res.equals("")) {
+            Document document = Document.parse(student);
+            append = document.append("id", res).append("code", 200);
+        } else {
+            append = new Document();
+            append.put("code", 203);
+            append.put("message", "Alreadt Esixt");
+        }
+
+        JsonWriterSettings writerSettings = new JsonWriterSettings(JsonMode.SHELL, true);
+
+        return Response.ok(append.toJson(writerSettings), MediaType.APPLICATION_JSON).build();
+    }
+    
+     @POST
+    @Path("/doctor/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response postNewDrRecord(String student) {
         super.InsertChembesrData(student, new Dbresponse() {
             @Override
             public void OnSucess(String data) {

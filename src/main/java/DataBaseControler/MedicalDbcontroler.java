@@ -24,14 +24,39 @@ import org.bson.types.ObjectId;
 public class MedicalDbcontroler {
 
     public void InsertChembesrData(final String data, final Dbresponse dnresp) {
-        new MongodbConnector(MongodbConnector.CHEMBERS, new MongodbConnector.OnDbConnection() {
+        new MongodbConnector(MongodbConnector.DBDOCTOR, new MongodbConnector.OnDbConnection() {
             @Override
             public void Conconnected(MongoDatabase db) {
 
                 Document document = Document.parse(data);
 
-                MongoCollection<Document> collection = db.getCollection("Doctors");
+                MongoCollection<Document> collection = db.getCollection(MongodbConnector.CHEMBERS);
                 Document index = new Document("phone", 1);
+                collection.createIndex(index, new IndexOptions().unique(true));
+
+                collection.insertOne(document);
+                ObjectId id = (ObjectId) document.get("_id");
+                dnresp.OnSucess(id.toString());
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void ErorrConnected(String exception) {
+                dnresp.OnSucess("Connected Faied" + exception);
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+    }
+    
+    public void InsertDrData(final String data, final Dbresponse dnresp) {
+        new MongodbConnector(MongodbConnector.DBDOCTOR, new MongodbConnector.OnDbConnection() {
+            @Override
+            public void Conconnected(MongoDatabase db) {
+
+                Document document = Document.parse(data);
+
+                MongoCollection<Document> collection = db.getCollection(MongodbConnector.DOCTOR);
+                Document index = new Document("email", 1);
                 collection.createIndex(index, new IndexOptions().unique(true));
 
                 collection.insertOne(document);
@@ -49,7 +74,7 @@ public class MedicalDbcontroler {
     }
 
     public void FindChembesrData(final String data, final Dbresponse dnresp) {
-        new MongodbConnector(MongodbConnector.CHEMBERS, new MongodbConnector.OnDbConnection() {
+        new MongodbConnector(MongodbConnector.DBDOCTOR, new MongodbConnector.OnDbConnection() {
             @Override
             public void Conconnected(MongoDatabase db) {
 
